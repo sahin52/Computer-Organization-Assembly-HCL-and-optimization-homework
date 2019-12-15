@@ -1,0 +1,47 @@
+#sahin kasap 2264562
+.pos 0 
+	irmovq stack, %rsp  	# Set up stack pointer  
+	irmovq ele1, %rdi		# set parameter
+	call rsum_list			# call sum_list(ele1)
+	halt					# Terminate program 
+
+# Sample linked list
+.align 8
+ele1:
+	.quad 0x00a
+	.quad ele2
+ele2:
+	.quad 0x0b0
+	.quad ele3
+ele3:
+	.quad 0xc00
+	.quad 0
+
+/* $begin rsum_list */
+# long rsum_list(list_ptr ls)
+rsum_list:
+	xorq %rax, %rax 		# val = 0
+	jmp test 				# jump directly to test
+loop:
+	pushq %r9		#save r9 on stack
+	mrmovq (%rdi), %r9 	# mov current node's value to r9
+	mrmovq 8(%rdi), %rdi   #rdi->next
+	call rsum_list		#rsum_list(rdi)
+	addq %r9, %rax 		# val += ls->val
+	popq %r9
+	ret
+	
+test:
+	andq %rdi, %rdi 		# test loop variable
+	je done 				# return loop if it's not null
+	jmp loop
+						
+done:
+	ret
+/* $end rsum_list */
+
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+stack:	 
+
